@@ -103,23 +103,23 @@ namespace DAXRunner
                 if (tbl1.Rows.Count != tbl2.Rows.Count || tbl1.Columns.Count != tbl2.Columns.Count)
                 {
                     string msg = tbl1.Rows.Count + " SRC-[Rows]-TGT " + tbl2.Rows.Count + " - " + tbl1.Columns.Count + " SRC-[Count]-TGT " + tbl2.Columns.Count;
-                    Console.WriteLine(msg);
+                    //Console.WriteLine(msg);
                     ResultDataTable.Columns.AddRange(new DataColumn[2] { new DataColumn("ERROR1"), new DataColumn("ERROR2") });
                     ResultDataTable.Rows.Add("Count Failed", "" );
                     ResultDataTable.Rows.Add( msg, "" );
                     return ResultDataTable;
                 }
-                Console.WriteLine("First Table");
+                //Console.WriteLine("First Table");
                 for (int i = 0; i < tbl1.Columns.Count; i++)
                 {
-                    Console.WriteLine(tbl1.Columns[i].ColumnName + "-" + tbl1.Columns[i].DataType);
+                    //Console.WriteLine(tbl1.Columns[i].ColumnName + "-" + tbl1.Columns[i].DataType);
                     ResultDataTable.Columns.Add(tbl1.Columns[i].ColumnName);
                 }
-                Console.WriteLine("Second Table");
-                for (int i = 0; i < tbl2.Columns.Count; i++)
-                {
-                    Console.WriteLine(tbl2.Columns[i].ColumnName + "-" + tbl2.Columns[i].DataType);
-                }
+                //Console.WriteLine("Second Table");
+                //for (int i = 0; i < tbl2.Columns.Count; i++)
+                //{
+                //    Console.WriteLine(tbl2.Columns[i].ColumnName + "-" + tbl2.Columns[i].DataType);
+                //}
 
 
 
@@ -141,11 +141,10 @@ namespace DAXRunner
                             y = Convert.ToDouble(getNullReplace(tbl2.Rows[i][c].ToString()));
                             if (!Equals(Math.Round(x,3), Math.Round(y,3)))
                             {
-                                ++errorCount;
                                 String msg = tbl1.Rows[i][c].ToString() + " [SRC-[not Equal]-TGT] " + tbl2.Rows[i][c].ToString();
                                 //Console.WriteLine(msg);
                                 ResultDataTable.Rows.Add();
-                                ResultDataTable.Rows[errorCount][c] = msg;
+                                ResultDataTable.Rows[errorCount++][c] = msg;
 
                             }
                         }
@@ -153,11 +152,10 @@ namespace DAXRunner
                         {
                             if (!Equals(getNullReplace(tbl1.Rows[i][c].ToString()), getNullReplace(tbl2.Rows[i][c].ToString())))
                             {
-                                ++errorCount;
                                 String msg = tbl1.Rows[i][c].ToString() + " [SRC-[not Equal]-TGT] " + tbl2.Rows[i][c].ToString();
                                 //Console.WriteLine(msg);
                                 ResultDataTable.Rows.Add();
-                                ResultDataTable.Rows[errorCount][c] = msg;
+                                ResultDataTable.Rows[errorCount++][c] = msg;
 
                             }
                         }
@@ -165,7 +163,8 @@ namespace DAXRunner
                 }
             }catch(Exception e)
             {
-                Console.WriteLine(e.Message);
+                throw e;
+                
             }
             return ResultDataTable;
         }
