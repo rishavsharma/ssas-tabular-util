@@ -12,7 +12,7 @@ namespace SSASLoadTest
     class Program
     {
         private static bool keepRunning = true;
-        private static void RunQuery(string server, string model, string query)
+        private static void RunQuery(string server, string model, string query, string testName)
         {
             DateTime srcStartTime = DateTime.Now, srcEndTime = DateTime.Now;
             ADOTabularConnection srcConx = null;
@@ -28,11 +28,11 @@ namespace SSASLoadTest
                     status = "PASS";
                     srcConx = new ADOTabularConnection(server,ADOTabular.Enums.AdomdType.AnalysisServices);
                     srcConx.ChangeDatabase(model); 
-                    srcDT = srcConx.ExecuteDaxQueryDataTable(query); 
+                    srcDT = srcConx.ExecuteDaxQueryDataTable(query);
                     recordCount = srcDT.Rows.Count;
                     SPID = srcConx.SPID;
                     srcEndTime = DateTime.Now;
-                    Console.WriteLine("Session:" + srcConx.SPID + "["+ (srcEndTime - srcStartTime).TotalSeconds.ToString()+"]");
+                    Console.WriteLine("Test Name:["+testName+"] | Start:[" + srcStartTime +"] | End:["+ srcEndTime + "] | Total Time:["+ (srcEndTime - srcStartTime).TotalSeconds.ToString()+"]");
                 }
                 catch (Exception ee)
                 {
@@ -55,7 +55,7 @@ namespace SSASLoadTest
             }
             finally
             {
-                srcConx.Close();
+                srcConx.Close(); 
             }
         }
         public class Options
@@ -93,12 +93,12 @@ namespace SSASLoadTest
                            string srcSSAS = "Data Source = " +  row["SERVER"].ToString();
                            string srcSSASModel = row["MODEL"].ToString();
                            string srcQuery = row["DAX"].ToString();
-                           ThreadPool.QueueUserWorkItem(state => Program.RunQuery(srcSSAS, srcSSASModel, srcQuery));
+                           ThreadPool.QueueUserWorkItem(state => Program.RunQuery(srcSSAS, srcSSASModel, srcQuery,testName));
                        }
                        srcEndTime = DateTime.Now;
                        
                        Console.ReadLine();
-                       Console.WriteLine("Time Taken:" + (srcEndTime - srcStartTime).TotalSeconds.ToString());
+                       //Console.WriteLine("Time Taken:" + (srcEndTime - srcStartTime).TotalSeconds.ToString());
                    });
             
         }

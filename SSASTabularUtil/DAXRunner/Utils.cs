@@ -10,6 +10,7 @@ namespace DAXRunner
 {
     class Utils
     {
+        public static int ERROR_ROWS = 20000;
         public class StatusRow
         {
             public String NAME { get; set; }
@@ -123,11 +124,13 @@ namespace DAXRunner
 
 
 
-                int ERROR_LIMIT = 1000;
+                int ERROR_LIMIT = ERROR_ROWS;
                 int errorCount = 0;
                 for (int i = 0; i < tbl1.Rows.Count; i++)
                 {
-                    if(errorCount > ERROR_LIMIT)
+                    //errorCount++;
+                    ResultDataTable.Rows.Add();
+                    if (errorCount > ERROR_LIMIT)
                     {
                         break;
                     }
@@ -137,35 +140,69 @@ namespace DAXRunner
                         if (tbl1.Columns[c].DataType == typeof(System.Double) || tbl1.Columns[c].DataType == typeof(System.Decimal))
                         {
                             double x, y;
-                            x = Convert.ToDouble(getNullReplace(tbl1.Rows[i][c].ToString()));
-                            y = Convert.ToDouble(getNullReplace(tbl2.Rows[i][c].ToString()));
-                            if (!Equals(Math.Round(x,3), Math.Round(y,3)))
+                            x = Math.Round(Convert.ToDouble(getNullReplace(tbl1.Rows[i][c].ToString()))/100,0)*100;
+                            y = Math.Round(Convert.ToDouble(getNullReplace(tbl2.Rows[i][c].ToString()))/100,0)*100;
+
+                            if (x != y)
                             {
+                                //++errorCount;
                                 String msg = tbl1.Rows[i][c].ToString() + " [SRC-[not Equal]-TGT] " + tbl2.Rows[i][c].ToString();
                                 //Console.WriteLine(msg);
-                                ResultDataTable.Rows.Add();
-                                ResultDataTable.Rows[errorCount++][c] = msg;
-
+                                //ResultDataTable.Rows.Add();
+                                ResultDataTable.Rows[i][c] = msg;
+                                errorCount++;
                             }
                         }
                         else
                         {
                             if (!Equals(getNullReplace(tbl1.Rows[i][c].ToString()), getNullReplace(tbl2.Rows[i][c].ToString())))
                             {
+                                //++errorCount;
                                 String msg = tbl1.Rows[i][c].ToString() + " [SRC-[not Equal]-TGT] " + tbl2.Rows[i][c].ToString();
                                 //Console.WriteLine(msg);
-                                ResultDataTable.Rows.Add();
-                                ResultDataTable.Rows[errorCount++][c] = msg;
-
+                                //ResultDataTable.Rows.Add();
+                                ResultDataTable.Rows[i][c] = msg;
+                                errorCount++;
                             }
                         }
                     }
                 }
-            }catch(Exception e)
-            {
-                throw e;
-                
+                if (errorCount == 0)
+                {
+                    ResultDataTable.Rows.Clear();
+                }
             }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
+            }
+            //if (ResultDataTable.Rows.Count > 0)
+            //{
+            //    bool isEmpty = true;
+            //    for (int r = 0; r < ResultDataTable.Rows.Count; r++)
+            //    {
+            //        for (int i = 0; i < ResultDataTable.Columns.Count; i++)
+            //        {
+            //            string cv = ResultDataTable.Rows[r][i].ToString().Trim();
+            //            if (!String.IsNullOrEmpty(cv))
+            //            {
+            //                isEmpty = false;
+            //                break;
+            //            }
+            //        }
+            //        if (!isEmpty)
+            //        {
+            //            break;
+            //        }
+            //    }
+
+            //    if (isEmpty)
+            //    {
+            //        ResultDataTable.Rows.Clear();
+            //    }
+            //}
+            
             return ResultDataTable;
         }
 
