@@ -164,6 +164,7 @@ namespace TabularEditor.TOMWrapper.Utils
 
                     // Remove members if present and add original:
                     var roleName = role["name"].Value<string>();
+                    
                     if (orgDb.Model.Roles.Contains(roleName))
                     {
                         foreach (var member in orgDb.Model.Roles[roleName].Members)

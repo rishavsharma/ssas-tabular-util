@@ -101,7 +101,7 @@ namespace DAXRunner
                 }
                 else
                 {
-                    ret = Utils.getDifferentRecords(srcDT, tgtDT);
+                    
                     srcNoOfRows = srcDT.Rows.Count;
                     tgtNoOfRows = tgtDT.Rows.Count;
                     srcNoOfColumn = srcDT.Columns.Count;
@@ -117,17 +117,21 @@ namespace DAXRunner
                         status = "FAILED";
                         srcErrorMsg = "Number of rows:" + srcNoOfRows;
                         tgtErrorMsg = "Number of rows:" + tgtNoOfRows;
-                    }
-                    else if (ret.Rows.Count > 0)
-                    {
-                        status = "FAILED";
-                        srcErrorMsg = "Data Mismatch";
-                    }
+                    }                    
                     else if (srcNoOfColumn != tgtNoOfColumn)
                     {
                         status = "FAILED";
                         srcErrorMsg = "Number of Columns:" + srcNoOfColumn;
                         tgtErrorMsg = "Number of Columns:" + tgtNoOfColumn;
+                    } else
+                    {
+                        ret = Utils.getDifferentRecords(srcDT, tgtDT);
+                        if (ret.Rows.Count > 0)
+                        {
+                            status = "FAILED";
+                            srcErrorMsg = "Data Mismatch";
+                        }                            
+                        
                     }
                 }
 
